@@ -1,0 +1,25 @@
+# **WINDOW HIDER**
+
+*Made by Nam1925*
+
+
+
+**DESCRIPTION**: Hide your window from task bar and alt-tab list
+
+
+
+**Requires**: Python
+
+**Modules**: pywin32, keyboard
+
+
+
+**NOTE**: 
+
+* If you don't have python, use the winhider.exe file.
+* You can open "config.json" by any text editor (e,g: Notepad)
+
+
+
+**License**: MIT
+
