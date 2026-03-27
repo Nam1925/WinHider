@@ -1,38 +1,36 @@
 import win32gui  # pip install pywin32
 import win32con
 import keyboard  # pip install keyboard
-import time
-import json
-import os
+import time, subprocess, sys, os
+
+def install_packages(packages):
+    for package in packages:
+        try:
+            __import__(package)
+        except ImportError:
+            print(f"[MISSING] {package} not found, installing...")
+            subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+            print(f"[INS] {package} installed successfully")
 
 CONFIG_FILE = "config.json"
-
 DEFAULT_KEYBINDS = {
     "toggle": "shift+tab",
     "exit": "shift+esc"
 }
 
 def load_config():
-    if not os.path.exists(CONFIG_FILE):
-        default_config = {
-            "hide_console": True,
-            "show_on_exit": True,
-            "keybind": DEFAULT_KEYBINDS
-        }
-        with open(CONFIG_FILE, "w") as f:
-            json.dump(default_config, f, indent=4)
-        return default_config
-
-    try:
-        with open(CONFIG_FILE, "r") as f:
-            return json.load(f)
-    except Exception:
-        print("\033[91mWARN: Failed to read config.json. Using defaults.\033[0m")
+    if input("CONFIG? (y/n) ").lower() == "y":
+        print("0 = False, 1 = True")
         return {
-            "hide_console": True,
-            "run_on_startup": False,
-            "keybind": DEFAULT_KEYBINDS
+            "hide_console":(True if input("hide_console: ") == "1" else False),
+            "show_on_exit":(True if input("show_on_exit: ") == "1" else False),
+            "keybind":input("keybind (Enter keybind): ")
         }
+    return {
+        "hide_console": True,
+        "show_on_exit": True,
+        "keybind": DEFAULT_KEYBINDS
+    }
 
 # WINDOW FUNCTIONS
 def enum_windows_callback(hwnd, windows):
@@ -114,9 +112,6 @@ def main():
 
     print(f"\n[WINHIDER] Selected window: {title}\n")
 
-    if config.get("hide_console", True):
-        hide_from_taskbar(windows[0][0])
-
     # ===== CALLBACKS =====
     def toggle_window():
         nonlocal hidden
@@ -145,8 +140,20 @@ def main():
     print(f"Press {toggle_key} to toggle hide/show.")
     print(f"Press {exit_key} to quit.\n")
 
+    if config.get("hide_console", True):
+        time.sleep(0.5)
+        hide_from_taskbar(windows[0][0])
+
     while running:
         time.sleep(0.1)
 
 if __name__ == "__main__":
+    # Install dependencies
+    # if bundled as exe (pyinstaller/auto-py-to-exe), skip pip installs
+    if getattr(sys, "frozen", False) or os.path.splitext(sys.argv[0])[1].lower() == ".exe":
+        print("[Running as .exe]")
+    else:
+        print("[Running as .py]")
+        install_packages(["pywin32", "keyboard"])
+    
     main()
