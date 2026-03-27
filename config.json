@@ -1,8 +1,0 @@
-{
-    "hide_console": true,
-    "show_on_exit": true,
-    "keybind": {
-        "toggle": "shift+tab",
-        "exit": "shift+esc"
-    }
-}
