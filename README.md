@@ -13,6 +13,5 @@
 **NOTE**: 
 
 * If you don't have python, use the winhider.exe file.
-* You can open "config.json" by any text editor (e,g: Notepad)
 
 **License**: MIT
